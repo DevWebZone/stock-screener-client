@@ -1,0 +1,44 @@
+<div id="searchbox">
+    <form #form="ngForm" (submit)="OnSubmit()">
+      <input type="text" name="search" placeholder="Search" [(ngModel)]="searchName">
+    </form>
+  </div>
+  <div id="display-card" >
+    <div class="upper-card">
+      <!-- <img src="../../assets/hot.jpg" >
+      <img src="../../assets/cold.jpg" > -->
+      <div class="main-info">
+
+        <h2 id="instrument">{{stockName}}</h2>
+        <div id="current-info">
+          <span id="current-price">{{stockData.last_price.toString()| currency:"₹"}}</span>
+          <span class="green" id="change" *ngIf="this.stockData.last_price.valueOf() - this.stockData.ohlc.open.valueOf() >= 0">
+            +({{this.stockData.last_price.valueOf() - this.stockData.ohlc.open.valueOf() | number: '1.0-2'}})
+          </span>
+          <span class="red" id="change" *ngIf="this.stockData.last_price.valueOf() - this.stockData.ohlc.open.valueOf() < 0">
+            ({{this.stockData.last_price.valueOf() - this.stockData.ohlc.open.valueOf() | number: '1.0-2'}})
+          </span>
+        </div>  
+        <img src="../../assets/chart.png" *ngIf="this.stockData.last_price.valueOf() - this.stockData.ohlc.open.valueOf() >= 0" >
+        <img src="../../assets/Chart-red.png" *ngIf="this.stockData.last_price.valueOf() - this.stockData.ohlc.open.valueOf() < 0" >
+      </div>
+    </div>
+    <div class="lower-card">
+      <h2>Overview</h2>
+      <div class="info-container">
+          <div class="info-card">
+              <span class="info-name">Open</span>
+            <span class="info-value">{{stockData.ohlc.open.toString()| currency:"₹"}} </span>
+          </div>
+          <div class="info-card">
+            <span class="info-name">High</span>
+          <span class="info-value">{{stockData.ohlc.high.toString()| currency:"₹"}}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-name">Low</span>
+          <span class="info-value">{{stockData.ohlc.low.toString()| currency:"₹"}}</span>
+          </div>
+      </div>
+    </div>
+  </div>
+  
