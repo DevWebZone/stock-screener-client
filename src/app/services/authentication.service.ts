@@ -11,7 +11,7 @@ export class AuthenticationService {
   constructor(private http: HttpClient) {
     
   }
-
+// Service to get bearer token using authorization code. token is valid for 1 day
  getAuthorizationToken(Code:string): Observable<any>{
 
     const url = environment.authorizationUrl;
@@ -30,7 +30,7 @@ export class AuthenticationService {
      headers: headers
    })
   }
-
+// Service to get data for a defined instrument
   getMarketData(access_token:any, stockName:any): Observable<any>{
     // Set request headers
     const headers = new HttpHeaders({

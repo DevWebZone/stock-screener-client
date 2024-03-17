@@ -11,6 +11,7 @@ export class LoadingComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute) {}
 
 ngOnInit() {
+    // after authorization redirection page. authorization code is recieved in query params
     const queryParams = this.route.snapshot.queryParams;
     console.log(queryParams); // Log the query parameters
 
@@ -18,7 +19,7 @@ ngOnInit() {
     const navigationExtras: NavigationExtras = {
       queryParamsHandling: 'preserve' // Preserve query params
   };
-  this.router.navigate(["/app"], navigationExtras);
+  this.router.navigate(["/app"], navigationExtras); // navigate to main app page after recieving authorization code
     
 }
 }
