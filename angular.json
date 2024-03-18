@@ -33,7 +33,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "src/assets/websocket.js"
             ]
           },
           "configurations": {

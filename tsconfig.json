@@ -5,7 +5,6 @@
     "outDir": "./dist/out-tsc",
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
