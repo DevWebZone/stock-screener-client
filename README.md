@@ -1,7 +1,9 @@
-# StockScreenerClient
+# StockScreener App
 Angular Application to get real time share market data for indian stocks using Integration with Upstox API
 # App Interface
+
 ![image](https://github.com/DevWebZone/stock-screener-client/assets/155177351/cf200f73-511b-4ea3-b0eb-a7672ca8186b)
+
 ![image](https://github.com/DevWebZone/stock-screener-client/assets/155177351/8e7763f3-d907-4b42-8a4c-4378179d045a)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.8.
