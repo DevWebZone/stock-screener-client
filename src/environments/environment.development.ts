@@ -5,4 +5,5 @@ export const environment = {
     authorizationUrl: 'https://api.upstox.com/v2/login/authorization/token',
     apiClientSecret: '0qg6j4rvq7',
     marketDataUrl: 'https://api.upstox.com/v2/market-quote/ohlc',
+    marketDataFeedUrl: 'https://api.upstox.com/v2/feed/market-data-feed/authorize'
 };

@@ -44,4 +44,15 @@ export class AuthenticationService {
     // Make GET request with headers
     return this.http.get<any>(environment.marketDataUrl, { params: params, headers: headers });
   }
+  getMarketDataUrl(access_token:any): Observable<any>{
+    // Set request headers
+    console.log("check")
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}` // Attach bearer token to Authorization header
+    });
+
+    // Make GET request with headers
+    return this.http.get<any>(environment.marketDataFeedUrl, { headers: headers });
+  }
 }

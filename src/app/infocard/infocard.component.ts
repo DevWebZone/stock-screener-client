@@ -6,7 +6,9 @@ import { StockData, StockObject } from '../interface/stock';
 import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 import { StockdataService } from '../services/stockdata.service';
+import { SocketConnectionService } from '../services/socket-connection.service';
 
+import { protobufPackage, FeedResponse, LTPC, MarketFullFeed, MarketLevel, Feed } from '../interface/MarketDataFeed';
 @Component({
   selector: 'app-infocard',
   standalone: true,
@@ -19,8 +21,8 @@ export class InfocardComponent implements OnInit {
   token: string | undefined;
   searchName: string = '';
   stockName: string = '';
-  stockData!: StockData;
-  constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService, private stockDataservice: StockdataService) {}
+  stockData!: Feed;
+  constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService, private stockDataservice: StockdataService, private marketService: SocketConnectionService ) {}
   // Once page loads
   ngOnInit(): void {
     // Main App Component. By default Nifty 50 data is display once users lands for the first time
@@ -33,24 +35,57 @@ export class InfocardComponent implements OnInit {
         
           this.token= response.access_token;
           sessionStorage.setItem("access_token",  response.access_token)
-          // gets data for a defined stock
-          this.authenticationService.getMarketData(this.token, "NSE_INDEX|Nifty 50").subscribe( {next: (response)=>{
-              
-              const key = Object.keys(response.data)[0]; // first key contains name of stock in response. dynamic in nature
-              
-              this.stockData = response.data[key]
-              this.stockName = "Nifty 50";
-            }
+          this.authenticationService.getMarketDataUrl(this.token).subscribe( {next: (response)=>{
+            console.log(response.data.authorizedRedirectUri);
+            
+             this.marketService.connect(response.data.authorizedRedirectUri,this.token,"NSE_EQ|INE793A01012").subscribe(quote => {
+              console.log(quote);
+              this.stockData = quote.feeds["NSE_EQ|INE793A01012"];
+              // this.stockData.last_price = quote.feeds["NSE_INDEX|Nifty 50"].ltpc?.ltp;
+              // this.stockData.ohlc.open = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].open;
+              // this.stockData.ohlc.close = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].close;
+              // this.stockData.ohlc.high = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].high;
+              // this.stockData.ohlc.low = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].low;
+              this.stockName = "ACCELYA SOLN INDIA LTD";
+            });
+            console.log("reached");
+            // ws.on("message", (data) => {
+            //   console.log(JSON.stringify(this.marketService.decodeProfobuf(data)['feeds']['NSE_INDEX|Nifty 50']));
+            //  });
+          }
           });
+          // gets data for a defined stock
+          // this.authenticationService.getMarketData(this.token, "NSE_INDEX|Nifty 50").subscribe( {next: (response)=>{
+              
+          //     const key = Object.keys(response.data)[0]; // first key contains name of stock in response. dynamic in nature
+              
+          //     this.stockData = response.data[key]
+          //     this.stockName = "Nifty 50";
+          //   }
+          // });
           }
         });
     else 
-          this.authenticationService.getMarketData(this.token, "NSE_INDEX|Nifty 50").subscribe( {next: (response)=>{      
-            const key = Object.keys(response.data)[0];
-            this.stockData = response.data[key]
-            this.stockName = "Nifty 50";
-          }
-        });    
+      this.authenticationService.getMarketDataUrl(this.token).subscribe( {next: (response)=>{
+        console.log(response.data.authorizedRedirectUri);
+        
+        this.marketService.connect(response.data.authorizedRedirectUri,this.token,"NSE_EQ|INE793A01012").subscribe(quote => {
+          console.log(quote);
+          this.stockData = quote.feeds["NSE_EQ|INE793A01012"];
+          console.log(this.stockData);
+          // this.stockData.last_price = quote.feeds["NSE_INDEX|Nifty 50"].ltpc?.ltp;
+          // this.stockData.ohlc.open = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].open;
+          // this.stockData.ohlc.close = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].close;
+          // this.stockData.ohlc.high = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].high;
+          // this.stockData.ohlc.low = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].low;
+          this.stockName = "ACCELYA SOLN INDIA LTD";
+        });
+      console.log("reached");
+      // ws.on("message", (data) => {
+      //   console.log(JSON.stringify(this.marketService.decodeProfobuf(data)['feeds']['NSE_INDEX|Nifty 50']));
+      //  });
+    }
+    });
   }
   // Once user submits by pressing enter 
   OnSubmit(){
@@ -66,15 +101,23 @@ export class InfocardComponent implements OnInit {
               if(obj.instrument_name.toLowerCase().includes(this.searchName.toLowerCase()))
               {
                // name is matched, gets data for the matched instrument_name using instrument_key and getMarketData Service same as above
-                this.authenticationService.getMarketData(this.token, obj.instrument_key).subscribe( {next: (response)=>{
-                  const key = Object.keys(response.data)[0];
-                 
-                  this.stockData = response.data[key]
+               this.authenticationService.getMarketDataUrl(this.token).subscribe( {next: (response)=>{
+                console.log(response.data.authorizedRedirectUri);
+                
+                this.marketService.connect(response.data.authorizedRedirectUri,this.token, obj.instrument_key).subscribe(quote => {
+                  console.log(quote);
+                  this.stockData = quote.feeds[obj.instrument_key];
+                  console.log(this.stockData);
+                  // this.stockData.last_price = quote.feeds["NSE_INDEX|Nifty 50"].ltpc?.ltp;
+                  // this.stockData.ohlc.open = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].open;
+                  // this.stockData.ohlc.close = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].close;
+                  // this.stockData.ohlc.high = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].high;
+                  // this.stockData.ohlc.low = quote.feeds["NSE_INDEX|Nifty 50"].ff?.marketFF?.marketOHLC?.ohlc[0].low;
                   this.stockName = obj.instrument_name;
                   this.searchName = '';
-                    }
-                  });
-                  return;
+                });
+                }});
+                return;
               }
               //console.log(keyValue);
               
